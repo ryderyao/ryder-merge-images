@@ -28,8 +28,13 @@ const IOS_PANEL =
 const SOFT_BUTTON =
   "inline-flex cursor-pointer items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold tracking-tight transition active:opacity-95 disabled:opacity-40 disabled:pointer-events-none";
 
+interface ImageStripStudioProps {
+  /** 嵌入工具庫內頁時隱藏頂部行銷標題（由上層統一呈現工具名稱） */
+  hidePageHeading?: boolean;
+}
+
 /** 電商長條圖：多圖拖拉排序 → 縱向合併 / 對應比例或均等拆解（全在瀏覽器本地處理） */
-export default function ImageStripStudio(): JSX.Element {
+export default function ImageStripStudio({ hidePageHeading = false }: ImageStripStudioProps): JSX.Element {
   const uid = useId();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -157,25 +162,31 @@ export default function ImageStripStudio(): JSX.Element {
     (Boolean(mergedUrl) || items.length === 1);
 
   return (
-    <div className="mx-auto flex min-h-[100dvh] max-w-6xl flex-col gap-8 px-4 py-12 sm:px-6 lg:px-8">
-      <header className="space-y-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#636366]">電商視覺</p>
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-[clamp(2.4rem,4vw,3.75rem)] font-semibold leading-none tracking-tighter text-[#1C1C1E]">
-                長條圖合併工作台
-              </h1>
+    <div
+      className={`mx-auto flex min-h-[100dvh] max-w-6xl flex-col gap-8 px-4 sm:px-6 lg:px-8 ${
+        hidePageHeading ? "pb-12 pt-4 sm:pt-6" : "py-12"
+      }`}
+    >
+      {!hidePageHeading ? (
+        <header className="space-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#636366]">電商視覺</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-[clamp(2.4rem,4vw,3.75rem)] font-semibold leading-none tracking-tighter text-[#1C1C1E]">
+                  長條圖合併工作台
+                </h1>
+              </div>
             </div>
+            <span className={`${IOS_PANEL} shrink-0 px-5 py-2 text-sm font-semibold text-[#3A3A3C]`}>
+              Drag · Merge · Slice
+            </span>
           </div>
-          <span className={`${IOS_PANEL} shrink-0 px-5 py-2 text-sm font-semibold text-[#3A3A3C]`}>
-            Drag · Merge · Slice
-          </span>
-        </div>
-        <p className="max-w-2xl text-base text-[#8E8E93] md:text-[17px]">
-          上傳電商細節圖，拖曳排列順序，一鍵輸出高解析長條圖；再依最近一次合併比例或自定段數將畫面切回電商區塊節奏。
-        </p>
-      </header>
+          <p className="max-w-2xl text-base text-[#8E8E93] md:text-[17px]">
+            上傳電商細節圖，拖曳排列順序，一鍵輸出高解析長條圖；再依最近一次合併比例或自定段數將畫面切回電商區塊節奏。
+          </p>
+        </header>
+      ) : null}
 
       <input
         ref={inputRef}
