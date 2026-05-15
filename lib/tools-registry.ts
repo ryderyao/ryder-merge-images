@@ -32,6 +32,14 @@ export const TOOLS: readonly ToolDefinition[] = [
     ogDescription:
       "批量輸出電商主商品圖：1000×1000 JPG、約 50～1000 KB 自動調整品質，ZIP 下載。瀏覽器本地處理。",
   },
+  {
+    slug: "images-to-gif",
+    title: "多圖轉 GIF",
+    summary: "多張圖片拖曳排序、調整每幀顯示 0.1～1 秒，瀏覽器內產出可下載的循環動畫 GIF。",
+    scenario: "適合簡單輪播、梗圖或產品多視角。",
+    ogDescription:
+      "多圖排序、可調幀延遲、前端產生循環 GIF 並下載。本地處理、可預覽輪播與輸出檔。",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
