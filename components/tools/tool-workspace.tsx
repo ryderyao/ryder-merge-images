@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import type { JSX } from "react";
 import ImageStripStudio from "@/components/editor/image-strip-studio";
+import IgGridStudio from "@/components/editor/ig-grid-studio";
 import ImagesToGifStudio from "@/components/editor/images-to-gif-studio";
 import MainProductImageBatch from "@/components/editor/main-product-image-batch";
 import type { ToolDefinition } from "@/lib/tools-registry";
@@ -26,6 +27,9 @@ export function ToolWorkspace({ tool }: ToolWorkspaceProps): JSX.Element {
   }
   if (tool.slug === "images-to-gif") {
     body = <ImagesToGifStudio hidePageHeading />;
+  }
+  if (tool.slug === "ig-grid-preview") {
+    body = <IgGridStudio hidePageHeading />;
   }
 
   if (!body) {

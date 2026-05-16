@@ -40,6 +40,16 @@ export const TOOLS: readonly ToolDefinition[] = [
     ogDescription:
       "多圖排序、可調幀延遲、前端產生循環 GIF 並下載。本地處理、可預覽輪播與輸出檔。",
   },
+  {
+    slug: "ig-grid-preview",
+    title: "IG 九宮格裁切",
+    summary:
+      "上傳一張 4:5 構圖的完整視覺（建議 3240×4050），自動裁成 9 張 1080×1350，並依 IG 發文順序打包下載。",
+    scenario:
+      "先請 AI 依建議尺寸生成單張大圖，上傳後預覽九宮格，確認無誤再下載。此為 IG「風格」預覽，非官方 App；實際畫面以 Instagram 為準。",
+    ogDescription:
+      "單圖切 3×3、4:5 單格、發文順序 ZIP 與完整拼圖 PNG。瀏覽器本地處理。",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
