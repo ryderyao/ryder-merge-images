@@ -1,6 +1,5 @@
 "use client";
 
-import JSZip from "jszip";
 import {
   AlertCircle,
   Copy,
@@ -279,6 +278,11 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
   const postingLines = buildPostingOrderLines([...GRID_CELL_NAMES]);
   const ready = Boolean(fullBlob && tileBlobs && tileUrls?.length === 9 && fullUrl);
 
+  const sleep = (ms: number): Promise<void> =>
+    new Promise((resolve) => {
+      window.setTimeout(resolve, ms);
+    });
+
   const copyPostingText = async (): Promise<void> => {
     const text = postingLines.join("\n");
     try {
@@ -304,38 +308,26 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
     sendGa4Event("ig_grid_download_full", {});
   };
 
-  const downloadZip = async (): Promise<void> => {
-    if (!fullBlob || !tileBlobs || tileBlobs.length !== 9) return;
+  const downloadNineTiles = async (): Promise<void> => {
+    if (!tileBlobs || tileBlobs.length !== 9) return;
     setBusy(true);
+    setErrorMessage(null);
     try {
-      const zip = new JSZip();
-      const folder = zip.folder("發文順序");
-      if (!folder) throw new Error("ZIP 初始化失敗");
-
       for (let step = 1; step <= 9; step++) {
         const visualIdx = POSTING_VISUAL_ORDER[step - 1];
         const blob = tileBlobs[visualIdx];
-        folder.file(`${zipEntryBaseName(step)}.png`, blob);
+        const filename = `${zipEntryBaseName(step)}.png`;
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.rel = "noopener";
+        a.click();
+        queueMicrotask(() => URL.revokeObjectURL(a.href));
+        if (step < 9) await sleep(220);
       }
-
-      const prevFolder = zip.folder("預覽圖");
-      prevFolder?.file("IG九宮格完整拼圖.png", fullBlob);
-      zip.file("發文順序說明.txt", postingLines.join("\n"));
-
-      const zipped = await zip.generateAsync({
-        type: "blob",
-        compression: "DEFLATE",
-        compressionOptions: { level: 6 },
-      });
-      const hook = document.createElement("a");
-      hook.href = URL.createObjectURL(zipped);
-      hook.download = `IG九宮格發文包-${Date.now()}.zip`;
-      hook.rel = "noopener";
-      hook.click();
-      queueMicrotask(() => URL.revokeObjectURL(hook.href));
-      sendGa4Event("ig_grid_zip", { fit: fitMode });
+      sendGa4Event("ig_grid_download_tiles", { count: 9, fit: fitMode });
     } catch {
-      setErrorMessage("ZIP 產生失敗，請稍後再試。");
+      setErrorMessage("連續下載失敗：請檢查瀏覽器是否阻擋多檔下載，或允許本站下載後再試。");
     } finally {
       setBusy(false);
     }
@@ -370,7 +362,7 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
             IG 九宮格裁切
           </h1>
           <p className="max-w-2xl text-base text-[#8E8E93] md:text-[17px]">
-            單張 4:5 大圖自動切成 9 張 1080×1350，並附發文順序檔名打包下載。
+            單張 4:5 大圖自動切成 9 張 1080×1350，檔名已對應正確發文順序，可一次下載九張圖檔。
           </p>
         </header>
       ) : null}
@@ -417,7 +409,7 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
                   此工具會將畫布均分為 3×3，每格輸出 <strong className="text-[#1C1C1E]">{IG_TILE_W}×{IG_TILE_H}</strong>{" "}
                   PNG。
                 </li>
-                <li>下載 ZIP 內檔名已對應正確發文順序；實際 App 顯示仍以 Instagram 為準。</li>
+                <li>「下載 9 張發文圖」會依序存入 `01_先發.png`⋯`09_最後發.png`；實際 App 顯示仍以 Instagram 為準。</li>
               </ul>
             </div>
 
@@ -603,7 +595,7 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
             </div>
             {fullUrl && ready ? (
               <p className="mx-auto mt-4 max-w-[360px] text-center text-[11px] text-[#8E8E93]">
-                完整無縫大圖請使用「下載完整拼圖 PNG」或 ZIP 內預覽圖。
+                完整無縫大圖請使用「下載完整拼圖 PNG」。
               </p>
             ) : null}
           </DashboardCard>
@@ -663,7 +655,7 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
             <button
               type="button"
               disabled={!ready || busy}
-              onClick={() => void downloadZip()}
+              onClick={() => void downloadNineTiles()}
               className={`${SOFT_BUTTON} w-full justify-center rounded-[22px] border border-[#1C1C1E]/12 bg-white text-[#1C1C1E]`}
             >
               {busy ? (
@@ -671,10 +663,12 @@ export default function IgGridStudio({ hidePageHeading = false }: IgGridStudioPr
               ) : (
                 <Download className="mr-2 h-4 w-4" aria-hidden />
               )}
-              下載發文包 ZIP
+              下載 9 張發文圖（已命名）
             </button>
             <p className="text-xs leading-relaxed text-[#8E8E93]">
-              ZIP 含：`發文順序/` 九張 PNG（已依序命名）、`預覽圖/IG九宮格完整拼圖.png`、`發文順序說明.txt`。
+              會連續觸發 9 次下載，檔名為 <code className="rounded bg-[#F2F2F7] px-1">01_先發.png</code> 至{" "}
+              <code className="rounded bg-[#F2F2F7] px-1">09_最後發.png</code>
+              。若瀏覽器詢問是否允許多檔下載，請選允許；也可改用「複製說明文字」對照發文順序。
             </p>
           </DashboardCard>
         </BentoItem>

@@ -27,7 +27,7 @@ export const POST_STEP_LABELS = [
   "最後發",
 ] as const;
 
-/** ZIP 檔名：01_先發.png … */
+/** 匯出檔名：01_先發.png … */
 export function zipEntryBaseName(stepIndex1Based: number): string {
   const pad = String(stepIndex1Based).padStart(2, "0");
   const label = POST_STEP_LABELS[stepIndex1Based - 1];
