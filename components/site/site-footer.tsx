@@ -11,10 +11,6 @@ export default function SiteFooter(): JSX.Element {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 sm:px-6 lg:px-8">
         <p>
           <span className="font-semibold text-[#3A3A3C]">{siteName}</span>
-          <span className="mx-2 text-[#C7C7CC]" aria-hidden>
-            ·
-          </span>
-          <span>多半是瀏覽器直接處理，不用特地登入。</span>
         </p>
         {hasThreadsLink() ? (
           <p>

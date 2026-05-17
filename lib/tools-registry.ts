@@ -50,6 +50,17 @@ export const TOOLS: readonly ToolDefinition[] = [
     ogDescription:
       "單圖切 3×3、4:5 單格、九張 PNG 依序檔名下載與完整拼圖 PNG。瀏覽器本地處理。",
   },
+  {
+    slug: "shop-sales-board",
+    title: "小店營收看板",
+    summary:
+      "上傳 Excel／CSV 銷售明細，在畫面上看走勢、熱賣品、怎麼付錢，並可下載一張清楚的報表圖。",
+    scenario:
+      "適合小店家把 POS 或表單匯出的檔案拉進來，快速看懂這段時間賣得怎樣。",
+    ogDescription:
+      "本機解析銷售表：營收走勢、熱銷排行、付款與分類、人員與會員回購概覽，可匯出看板 PNG。",
+    ioHint: "上傳：.xlsx / .xls / .csv；輸出：畫面上的圖表與可下載的 PNG。",
+  },
 ];
 
 export function getToolBySlug(slug: string): ToolDefinition | undefined {
