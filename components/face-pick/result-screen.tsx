@@ -2,34 +2,39 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { JSX } from "react";
-import { FACE_PICK_GAME_DATA } from "@/lib/face-pick/game-data";
 
 interface ResultScreenProps {
   result: string;
   onPlayAgain: () => void;
 }
 
+function gamePageUrl(): string {
+  if (typeof window === "undefined") return "";
+  const u = new URL(window.location.href);
+  u.searchParams.delete("debug");
+  return u.toString();
+}
+
 export function ResultScreen({ result, onPlayAgain }: ResultScreenProps): JSX.Element {
   const [revealed, setRevealed] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setRevealed(true), 850);
     return () => clearTimeout(t);
   }, []);
 
-  const summary = `你為了一百萬接受了『${result}』`;
-
-  const handleCopy = useCallback(async () => {
-    const text = `${FACE_PICK_GAME_DATA.title}：${summary}`;
+  const handleCopyLink = useCallback(async () => {
+    const url = gamePageUrl();
+    if (!url || !navigator.clipboard?.writeText) return;
     try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
     } catch {
-      setCopied(false);
+      setLinkCopied(false);
     }
-  }, [summary]);
+  }, []);
 
   return (
     <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-[#1a1033] via-[#2d1b4e] to-[#0f172a] px-6 text-center">
@@ -46,10 +51,14 @@ export function ResultScreen({ result, onPlayAgain }: ResultScreenProps): JSX.El
           <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-[#C4B5FD]">
             最終結果
           </p>
-          <p className="mt-5 text-[clamp(1.15rem,4.8vw,1.45rem)] font-bold leading-relaxed text-white">
-            {summary}
-          </p>
-          <p className="mt-3 text-[14px] text-[#94A3B8]">這是你一路選下來的答案</p>
+          <div className="mx-auto mt-6 max-w-[300px] text-left">
+            <p className="text-[clamp(1.2rem,5vw,1.5rem)] font-bold leading-snug text-white">
+              你為了一百萬
+            </p>
+            <p className="mt-3 pl-5 text-[clamp(1.05rem,4.5vw,1.35rem)] font-bold leading-snug text-[#FEF9C3]">
+              「{result}」
+            </p>
+          </div>
           <div className="mt-10 flex w-full flex-col gap-3">
             <button
               type="button"
@@ -60,10 +69,10 @@ export function ResultScreen({ result, onPlayAgain }: ResultScreenProps): JSX.El
             </button>
             <button
               type="button"
-              onClick={() => void handleCopy()}
+              onClick={() => void handleCopyLink()}
               className="rounded-full border border-white/30 bg-white/10 px-8 py-3.5 text-[15px] font-semibold text-white active:scale-[0.98]"
             >
-              {copied ? "已複製" : "複製結果"}
+              {linkCopied ? "已複製連結" : "複製遊戲連結"}
             </button>
           </div>
         </div>

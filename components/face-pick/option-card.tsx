@@ -27,7 +27,7 @@ export function OptionCard({
     <div
       ref={boxRef}
       className={
-        `relative flex min-h-[72px] w-[38%] max-w-[128px] flex-col items-center justify-center rounded-xl border-2 px-2 py-2.5 text-center shadow-md backdrop-blur-sm transition-all duration-200 ${bg} ${borderGlow}` +
+        `relative flex min-h-[100px] w-[38%] max-w-[132px] flex-col items-center justify-center rounded-xl border-2 px-2.5 py-4 text-center shadow-md backdrop-blur-sm transition-all duration-200 ${bg} ${borderGlow}` +
         (selecting ? " scale-[1.04]" : " scale-100") +
         (exiting ? " opacity-0 scale-95" : "") +
         (entering ? " animate-fade-in" : "")

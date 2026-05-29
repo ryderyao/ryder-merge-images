@@ -1,4 +1,4 @@
-export const SELECTION_HOLD_MS = 200;
+export const SELECTION_HOLD_MS = 300;
 export const SELECTION_COOLDOWN_MS = 1000;
 export const FACE_LOST_HINT_MS = 1000;
 export const SMOOTHING_ALPHA = 0.3;
