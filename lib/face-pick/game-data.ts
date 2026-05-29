@@ -1,5 +1,5 @@
 /**
- * 地獄二選一 — 題庫設定（改這裡即可，存檔後重新部署）
+ * 殘酷二選一 — 題庫設定（改這裡即可，存檔後重新部署）
  *
  * - title：遊戲名稱（開始頁大標）
  * - question：遊戲進行中上方題目
@@ -13,7 +13,7 @@ export interface FacePickGameData {
 }
 
 export const FACE_PICK_GAME_DATA: FacePickGameData = {
-  title: "地獄二選一",
+  title: "殘酷二選一",
   question: "給你一百萬，你能接受做什麼？",
   options: [
     "吃自己的屎一次",

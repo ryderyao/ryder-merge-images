@@ -65,7 +65,7 @@ export const TOOLS: readonly ToolDefinition[] = [
   },
   {
     slug: "face-pick-one",
-    title: "地獄二選一",
+    title: "殘酷二選一",
     summary: "開啟前鏡頭，用頭部左右移動在兩個選項中二選一，一路淘汰到最後答案。",
     scenario:
       "類似短影音互動濾鏡：臉對準選項框並停留約 0.6 秒即確認。影像只在你的裝置上處理，不上傳。",
