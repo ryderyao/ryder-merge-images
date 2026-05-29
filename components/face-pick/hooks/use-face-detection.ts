@@ -25,7 +25,7 @@ export interface UseFaceDetectionOptions {
   active: boolean;
   leftBoxRef: React.RefObject<HTMLElement | null>;
   rightBoxRef: React.RefObject<HTMLElement | null>;
-  playBandRef: React.RefObject<HTMLElement | null>;
+  faceGuideRef: React.RefObject<HTMLElement | null>;
   dispatch: React.Dispatch<GameAction>;
   showDebugDot: boolean;
 }
@@ -40,7 +40,7 @@ export function useFaceDetection({
   active,
   leftBoxRef,
   rightBoxRef,
-  playBandRef,
+  faceGuideRef,
   dispatch,
   showDebugDot,
 }: UseFaceDetectionOptions): UseFaceDetectionResult {
@@ -188,12 +188,10 @@ export function useFaceDetection({
     }
 
     if (activeRef.current && now >= cooldownUntilRef.current && screenPoint) {
-      const band = playBandRef.current?.getBoundingClientRect();
-      const bandTop = band?.top ?? 0;
-      const bandBottom = band?.bottom ?? window.innerHeight;
+      const faceGuide = faceGuideRef.current?.getBoundingClientRect() ?? null;
       const leftRect = leftBoxRef.current?.getBoundingClientRect() ?? null;
       const rightRect = rightBoxRef.current?.getBoundingClientRect() ?? null;
-      const side = detectHoverSide(screenPoint, leftRect, rightRect, bandTop, bandBottom);
+      const side = detectHoverSide(screenPoint, leftRect, rightRect, faceGuide);
 
       if (side) {
         if (holdSideRef.current !== side) {
@@ -223,7 +221,7 @@ export function useFaceDetection({
     }
 
     rafRef.current = requestAnimationFrame(tick);
-  }, [videoRef, leftBoxRef, rightBoxRef, playBandRef, dispatch, pushUi]);
+  }, [videoRef, leftBoxRef, rightBoxRef, faceGuideRef, dispatch, pushUi]);
 
   useEffect(() => {
     if (!active || loading || loadError) return;

@@ -2,8 +2,8 @@ import type { Point2D } from "./smoothing";
 
 export type HoverSide = "left" | "right" | null;
 
-const HIT_PAD_X = 12;
-const HIT_PAD_Y = 48;
+const HIT_PAD_X = 8;
+const HIT_PAD_Y = 24;
 
 function expandedRect(rect: DOMRect): DOMRect {
   return new DOMRect(
@@ -24,25 +24,26 @@ export function pointInRect(point: Point2D, rect: DOMRect | null): boolean {
   );
 }
 
-/** Prefer box overlap; fall back to horizontal zones when face is in play band. */
+function sideFromX(point: Point2D, centerX: number, deadHalf: number): HoverSide {
+  if (point.x < centerX - deadHalf) return "left";
+  if (point.x > centerX + deadHalf) return "right";
+  return null;
+}
+
+/** Box overlap first; in face guide use head tilt (horizontal). */
 export function detectHoverSide(
   point: Point2D,
   leftRect: DOMRect | null,
   rightRect: DOMRect | null,
-  playBandTop: number,
-  playBandBottom: number,
+  faceGuideRect: DOMRect | null,
 ): HoverSide {
-  if (point.y < playBandTop || point.y > playBandBottom) return null;
-
   if (leftRect && pointInRect(point, expandedRect(leftRect))) return "left";
   if (rightRect && pointInRect(point, expandedRect(rightRect))) return "right";
 
-  const mid = (playBandTop + playBandBottom) / 2;
-  if (Math.abs(point.y - mid) > (playBandBottom - playBandTop) * 0.55) return null;
+  if (faceGuideRect && pointInRect(point, faceGuideRect)) {
+    const cx = faceGuideRect.left + faceGuideRect.width / 2;
+    return sideFromX(point, cx, faceGuideRect.width * 0.14);
+  }
 
-  const w = typeof window !== "undefined" ? window.innerWidth : 400;
-  const dead = w * 0.12;
-  if (point.x < w / 2 - dead) return "left";
-  if (point.x > w / 2 + dead) return "right";
   return null;
 }

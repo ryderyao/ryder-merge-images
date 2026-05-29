@@ -15,7 +15,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps): JSX.Element
           {FACE_PICK_GAME_DATA.title}
         </h1>
         <p className="mx-auto max-w-[280px] text-[15px] leading-relaxed text-[#CBD5E1]">
-          開啟前鏡頭，用頭部左右移動選擇選項。停在某邊約 0.6 秒即確認。
+          用頭部左右移動選擇選項，停在某邊約 0.3 秒即確認。
         </p>
       </div>
       <button
@@ -26,9 +26,6 @@ export function StartScreen({ onStart, loading }: StartScreenProps): JSX.Element
       >
         {loading ? "準備中…" : "開始遊戲"}
       </button>
-      <p className="mt-6 max-w-[260px] text-[12px] leading-relaxed text-[#94A3B8]">
-        需允許鏡頭權限。影像只在你的裝置上處理，不會上傳。
-      </p>
     </div>
   );
 }
