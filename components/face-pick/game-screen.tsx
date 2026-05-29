@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { JSX } from "react";
 import { CameraView } from "./camera-view";
-import { FaceGuide } from "./face-guide";
 import { useFaceDetection } from "./hooks/use-face-detection";
 import {
   getInteractionSnapshot,
@@ -32,7 +31,6 @@ export function GameScreen({
 }: GameScreenProps): JSX.Element {
   const leftBoxRef = useRef<HTMLDivElement>(null);
   const rightBoxRef = useRef<HTMLDivElement>(null);
-  const faceGuideRef = useRef<HTMLDivElement>(null);
   const prevLeftRef = useRef(gameState.currentLeftOption);
   const prevRightRef = useRef(gameState.currentRightOption);
 
@@ -52,7 +50,6 @@ export function GameScreen({
     active: gameState.phase === "playing",
     leftBoxRef,
     rightBoxRef,
-    faceGuideRef,
     dispatch,
     showDebugDot: showDebug,
   });
@@ -111,7 +108,7 @@ export function GameScreen({
 
         <div className="absolute left-0 right-0 top-[18%] z-10 -translate-y-1/2 px-5">
           <p className="mb-2 text-center text-[11px] font-medium text-white/70">
-            臉對準下方虛線框，再移向左／右，停留約 0.3 秒
+            頭部移向左／右選項，停留約 0.6 秒確認
           </p>
           <div className="flex items-start justify-between gap-2">
             <OptionCard
@@ -131,10 +128,6 @@ export function GameScreen({
               entering={enteringRight}
             />
           </div>
-        </div>
-
-        <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-          <FaceGuide guideRef={faceGuideRef} />
         </div>
 
         {interaction.showFaceHint ? (

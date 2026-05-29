@@ -25,7 +25,6 @@ export interface UseFaceDetectionOptions {
   active: boolean;
   leftBoxRef: React.RefObject<HTMLElement | null>;
   rightBoxRef: React.RefObject<HTMLElement | null>;
-  faceGuideRef: React.RefObject<HTMLElement | null>;
   dispatch: React.Dispatch<GameAction>;
   showDebugDot: boolean;
 }
@@ -40,7 +39,6 @@ export function useFaceDetection({
   active,
   leftBoxRef,
   rightBoxRef,
-  faceGuideRef,
   dispatch,
   showDebugDot,
 }: UseFaceDetectionOptions): UseFaceDetectionResult {
@@ -188,10 +186,9 @@ export function useFaceDetection({
     }
 
     if (activeRef.current && now >= cooldownUntilRef.current && screenPoint) {
-      const faceGuide = faceGuideRef.current?.getBoundingClientRect() ?? null;
       const leftRect = leftBoxRef.current?.getBoundingClientRect() ?? null;
       const rightRect = rightBoxRef.current?.getBoundingClientRect() ?? null;
-      const side = detectHoverSide(screenPoint, leftRect, rightRect, faceGuide);
+      const side = detectHoverSide(screenPoint, leftRect, rightRect);
 
       if (side) {
         if (holdSideRef.current !== side) {
@@ -221,7 +218,7 @@ export function useFaceDetection({
     }
 
     rafRef.current = requestAnimationFrame(tick);
-  }, [videoRef, leftBoxRef, rightBoxRef, faceGuideRef, dispatch, pushUi]);
+  }, [videoRef, leftBoxRef, rightBoxRef, dispatch, pushUi]);
 
   useEffect(() => {
     if (!active || loading || loadError) return;

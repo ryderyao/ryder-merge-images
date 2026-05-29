@@ -15,7 +15,7 @@ export function StartScreen({ onStart, loading }: StartScreenProps): JSX.Element
           {FACE_PICK_GAME_DATA.title}
         </h1>
         <p className="mx-auto max-w-[280px] text-[15px] leading-relaxed text-[#CBD5E1]">
-          用頭部左右移動選擇選項，停在某邊約 0.3 秒即確認。
+          用頭部左右移動選擇選項，停在某邊約 0.6 秒即確認。
         </p>
       </div>
       <button
