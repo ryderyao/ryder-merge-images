@@ -109,9 +109,9 @@ export function GameScreen({
       <div className="relative z-10 h-full">
         <QuestionCard text={FACE_PICK_GAME_DATA.question} />
 
-        <div className="absolute left-0 right-0 top-[33%] z-10 -translate-y-1/2 px-5">
+        <div className="absolute left-0 right-0 top-[24%] z-10 -translate-y-1/2 px-5">
           <p className="mb-2 text-center text-[11px] font-medium text-white/70">
-            臉對準下方虛線框，再移向左／右，停留約 0.3 秒
+            臉對準下方虛線框，再移向左／右，停留約 0.2 秒
           </p>
           <div className="flex items-start justify-between gap-2">
             <OptionCard
