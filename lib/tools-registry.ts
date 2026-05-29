@@ -11,6 +11,8 @@ export interface ToolDefinition {
   ogDescription?: string;
   /** 輸入／輸出格式一行話（選填） */
   ioHint?: string;
+  /** immersive：全螢幕工具，不顯示 ToolWorkspace 頂部說明區 */
+  layout?: "standard" | "immersive";
 }
 
 export const TOOLS: readonly ToolDefinition[] = [
@@ -60,6 +62,17 @@ export const TOOLS: readonly ToolDefinition[] = [
     ogDescription:
       "本機解析銷售表：營收走勢、熱銷排行、付款與分類、人員與會員回購概覽，可匯出看板 PNG。",
     ioHint: "上傳：.xlsx / .xls / .csv；輸出：畫面上的圖表與可下載的 PNG。",
+  },
+  {
+    slug: "face-pick-one",
+    title: "地獄二選一",
+    summary: "開啟前鏡頭，用頭部左右移動在兩個選項中二選一，一路淘汰到最後答案。",
+    scenario:
+      "類似短影音互動濾鏡：臉對準選項框並停留約 0.6 秒即確認。影像只在你的裝置上處理，不上傳。",
+    ogDescription:
+      "手機前鏡頭二選一小遊戲：頭部左右選項、停留確認、淘汰到最終結果。瀏覽器本地處理。",
+    ioHint: "需 HTTPS 與鏡頭權限；建議手機直式開啟。",
+    layout: "immersive",
   },
 ];
 

@@ -8,6 +8,7 @@ import IgGridStudio from "@/components/editor/ig-grid-studio";
 import ImagesToGifStudio from "@/components/editor/images-to-gif-studio";
 import MainProductImageBatch from "@/components/editor/main-product-image-batch";
 import ShopSalesStudio from "@/components/editor/shop-sales-studio";
+import FacePickStudio from "@/components/face-pick/face-pick-studio";
 import type { ToolDefinition } from "@/lib/tools-registry";
 import { ToolShareButton } from "@/components/tools/tool-share-button";
 import { hasThreadsLink, getThreadsProfileUrl } from "@/lib/site-config";
@@ -34,6 +35,13 @@ export function ToolWorkspace({ tool }: ToolWorkspaceProps): JSX.Element {
   }
   if (tool.slug === "shop-sales-board") {
     body = <ShopSalesStudio hidePageHeading />;
+  }
+  if (tool.slug === "face-pick-one") {
+    body = <FacePickStudio />;
+  }
+
+  if (tool.layout === "immersive") {
+    return body ?? <></>;
   }
 
   if (!body) {
