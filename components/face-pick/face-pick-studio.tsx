@@ -69,7 +69,7 @@ export default function FacePickStudio(): JSX.Element {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div
-        className="relative h-[100dvh] w-full max-w-[430px] overflow-hidden bg-[#0f172a] shadow-2xl"
+        className="relative h-[100dvh] w-full max-w-[430px] overflow-hidden bg-black shadow-2xl"
         style={{ aspectRatio: "9/16" }}
       >
         {state.phase === "idle" || state.phase === "requestingCamera" ? (
@@ -77,21 +77,21 @@ export default function FacePickStudio(): JSX.Element {
         ) : null}
 
         {state.phase === "error" ? (
-          <div className="flex h-full flex-col items-center justify-center bg-gradient-to-b from-[#1a1033] to-[#0f172a] px-6 text-center">
-            <p className="text-[15px] leading-relaxed text-white">{errorMsg}</p>
+          <div className="flex h-full flex-col items-center justify-center bg-black px-8 text-center">
+            <p className="text-[15px] leading-relaxed text-white/85">{errorMsg}</p>
             <button
               type="button"
               onClick={() => void handleStart()}
-              className="mt-8 rounded-full bg-white px-8 py-3.5 text-[16px] font-bold text-[#1C1C1E]"
+              className="mt-10 min-w-[160px] rounded-full bg-white px-8 py-3.5 text-[16px] font-bold text-black"
             >
               重新嘗試
             </button>
             <button
               type="button"
               onClick={handleRetry}
-              className="mt-3 text-[14px] font-medium text-[#94A3B8] underline"
+              className="mt-4 text-[14px] font-medium text-white/45"
             >
-              返回開始頁
+              返回
             </button>
           </div>
         ) : null}

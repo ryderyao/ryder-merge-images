@@ -82,8 +82,8 @@ export function GameScreen({
 
   if (loadError) {
     return (
-      <div className="flex h-full flex-col items-center justify-center bg-[#0f172a] px-6 text-center text-white">
-        <p className="text-[15px] leading-relaxed">{loadError}</p>
+      <div className="flex h-full flex-col items-center justify-center bg-black px-6 text-center">
+        <p className="text-[15px] leading-relaxed text-white/90">{loadError}</p>
       </div>
     );
   }
@@ -93,46 +93,39 @@ export function GameScreen({
   return (
     <div className="relative h-full w-full overflow-hidden bg-black">
       <CameraView videoRef={videoRef} setVideoElement={setVideoElement} />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/25" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/45 via-black/5 to-black/30" />
 
       {loading ? (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50">
-          <p className="rounded-full bg-white/90 px-5 py-2.5 text-[14px] font-semibold text-[#1C1C1E]">
-            載入人臉偵測中…
-          </p>
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-white/30 border-t-white" />
         </div>
       ) : null}
 
-      <div className="relative z-10 h-full">
+      <div className="relative z-10 flex h-full flex-col">
         <QuestionCard text={FACE_PICK_GAME_DATA.question} />
 
-        <div className="absolute left-0 right-0 top-[18%] z-10 -translate-y-1/2 px-5">
-          <p className="mb-2 text-center text-[11px] font-medium text-white/70">
-            頭部移向左／右選項，停留約 0.6 秒確認
-          </p>
-          <div className="flex items-start justify-between gap-2">
-            <OptionCard
-              boxRef={leftBoxRef}
-              label={gameState.currentLeftOption}
-              active={interaction.hoveringSide === "left"}
-              holdProgress={interaction.hoveringSide === "left" ? interaction.holdProgress : 0}
-              exiting={exitingLeft}
-              entering={enteringLeft}
-            />
-            <OptionCard
-              boxRef={rightBoxRef}
-              label={gameState.currentRightOption}
-              active={interaction.hoveringSide === "right"}
-              holdProgress={interaction.hoveringSide === "right" ? interaction.holdProgress : 0}
-              exiting={exitingRight}
-              entering={enteringRight}
-            />
-          </div>
+        <div className="absolute left-0 right-0 top-[22%] z-10 flex justify-between gap-3 px-4">
+          <OptionCard
+            boxRef={leftBoxRef}
+            label={gameState.currentLeftOption}
+            active={interaction.hoveringSide === "left"}
+            holdProgress={interaction.hoveringSide === "left" ? interaction.holdProgress : 0}
+            exiting={exitingLeft}
+            entering={enteringLeft}
+          />
+          <OptionCard
+            boxRef={rightBoxRef}
+            label={gameState.currentRightOption}
+            active={interaction.hoveringSide === "right"}
+            holdProgress={interaction.hoveringSide === "right" ? interaction.holdProgress : 0}
+            exiting={exitingRight}
+            entering={enteringRight}
+          />
         </div>
 
         {interaction.showFaceHint ? (
-          <p className="pointer-events-none absolute bottom-[max(env(safe-area-inset-bottom,0px),28px)] left-0 right-0 text-center text-[14px] font-medium text-white/90 drop-shadow">
-            請把臉移到畫面中間
+          <p className="pointer-events-none absolute bottom-[max(env(safe-area-inset-bottom,0px),32px)] left-0 right-0 text-center text-[13px] font-medium text-white/75">
+            請把臉對準鏡頭
           </p>
         ) : null}
 
@@ -145,7 +138,7 @@ export function GameScreen({
 function DebugDot({ point }: { point: Point2D }): JSX.Element {
   return (
     <div
-      className="pointer-events-none fixed z-[60] h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#22C55E] ring-2 ring-white"
+      className="pointer-events-none fixed z-[60] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 ring-2 ring-white/90"
       style={{ left: point.x, top: point.y }}
     />
   );
