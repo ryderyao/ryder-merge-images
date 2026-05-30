@@ -64,6 +64,14 @@ export const TOOLS: readonly ToolDefinition[] = [
     ioHint: "上傳：.xlsx / .xls / .csv；輸出：畫面上的圖表與可下載的 PNG。",
   },
   {
+    slug: "line-theme-pack",
+    title: "LINE 主題素材包",
+    summary: "上傳 ChatGPT 生成的 6 張母圖，自動裁切、命名並打包成 LINE 主題必要素材 ZIP。",
+    scenario: "",
+    ogDescription:
+      "6 張 LINE 主題母圖上傳，自動裁切縮放、官方檔名、ZIP 打包下載。瀏覽器本地處理。",
+  },
+  {
     slug: "face-pick-one",
     title: "殘酷二選一",
     summary: "開啟前鏡頭，用頭部左右移動在兩個選項中二選一，一路淘汰到最後答案。",

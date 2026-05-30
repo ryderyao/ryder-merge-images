@@ -9,6 +9,7 @@ import ImagesToGifStudio from "@/components/editor/images-to-gif-studio";
 import MainProductImageBatch from "@/components/editor/main-product-image-batch";
 import ShopSalesStudio from "@/components/editor/shop-sales-studio";
 import FacePickStudio from "@/components/face-pick/face-pick-studio";
+import LineThemeStudio from "@/components/editor/line-theme-studio";
 import type { ToolDefinition } from "@/lib/tools-registry";
 import { ToolShareButton } from "@/components/tools/tool-share-button";
 import { hasThreadsLink, getThreadsProfileUrl } from "@/lib/site-config";
@@ -35,6 +36,9 @@ export function ToolWorkspace({ tool }: ToolWorkspaceProps): JSX.Element {
   }
   if (tool.slug === "shop-sales-board") {
     body = <ShopSalesStudio hidePageHeading />;
+  }
+  if (tool.slug === "line-theme-pack") {
+    body = <LineThemeStudio hidePageHeading />;
   }
   if (tool.slug === "face-pick-one") {
     body = <FacePickStudio />;
@@ -71,7 +75,9 @@ export function ToolWorkspace({ tool }: ToolWorkspaceProps): JSX.Element {
             <h1 className="text-[clamp(1.75rem,4vw,2.5rem)] font-semibold leading-tight tracking-tighter text-[#1C1C1E]">
               {tool.title}
             </h1>
-            <p className="max-w-2xl text-[15px] leading-relaxed text-[#636366]">{tool.scenario}</p>
+            {tool.scenario.trim() ? (
+              <p className="max-w-2xl text-[15px] leading-relaxed text-[#636366]">{tool.scenario}</p>
+            ) : null}
             {tool.ioHint ? <p className="text-sm text-[#8E8E93]">{tool.ioHint}</p> : null}
             {threads ? (
               <p className="text-sm text-[#8E8E93]">
