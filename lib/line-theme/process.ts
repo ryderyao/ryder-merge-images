@@ -10,6 +10,7 @@ import {
   PASSCODE_ON_FILES,
   PROFILE_OUTPUTS,
 } from "@/lib/line-theme/output-map";
+import { prepareIconCell } from "@/lib/line-theme/remove-background";
 
 export interface LineThemeOutputFile {
   name: string;
@@ -80,24 +81,33 @@ function splitGridCells(bitmap: ImageBitmap, cols: number, rows: number): HTMLCa
   return out;
 }
 
-function fitCellToMenuCanvas(source: HTMLCanvasElement): HTMLCanvasElement {
+function fitContainCanvas(
+  source: HTMLCanvasElement,
+  outW: number,
+  outH: number,
+): HTMLCanvasElement {
   const canvas = document.createElement("canvas");
-  canvas.width = MENU_ICON_W;
-  canvas.height = MENU_ICON_H;
+  canvas.width = outW;
+  canvas.height = outH;
   const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("無法建立 Menu 畫布");
+  if (!ctx) throw new Error("無法建立輸出畫布");
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
   const sw = source.width;
   const sh = source.height;
-  const scale = Math.min(MENU_ICON_W / sw, MENU_ICON_H / sh);
+  const scale = Math.min(outW / sw, outH / sh);
   const dw = sw * scale;
   const dh = sh * scale;
-  const dx = (MENU_ICON_W - dw) / 2;
-  const dy = (MENU_ICON_H - dh) / 2;
+  const dx = (outW - dw) / 2;
+  const dy = (outH - dh) / 2;
   ctx.drawImage(source, dx, dy, dw, dh);
   return canvas;
+}
+
+function fitCellToMenuCanvas(source: HTMLCanvasElement): HTMLCanvasElement {
+  const icon = prepareIconCell(source);
+  return fitContainCanvas(icon, MENU_ICON_W, MENU_ICON_H);
 }
 
 function extractHalfSquare(bitmap: ImageBitmap, side: "left" | "right"): HTMLCanvasElement {
@@ -119,15 +129,8 @@ function extractHalfSquare(bitmap: ImageBitmap, side: "left" | "right"): HTMLCan
 }
 
 async function scaleSquareCanvas(source: HTMLCanvasElement, size: number): Promise<HTMLCanvasElement> {
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("無法縮放畫布");
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-  ctx.drawImage(source, 0, 0, size, size);
-  return canvas;
+  const icon = prepareIconCell(source);
+  return fitContainCanvas(icon, size, size);
 }
 
 async function processCover(file: File): Promise<LineThemeOutputFile[]> {
