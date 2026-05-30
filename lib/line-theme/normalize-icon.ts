@@ -9,6 +9,9 @@ export const ICON_ALPHA_THRESHOLD = 20;
 export const MENU_CONTENT_FILL = 0.56;
 export const PASSCODE_CONTENT_FILL = 0.54;
 
+/** LINE tab 顯示會略裁頂部，幾何置中會顯得偏上；menu 輸出略下移 */
+export const MENU_VERTICAL_BIAS = 0.06;
+
 interface Bounds {
   minX: number;
   minY: number;
@@ -95,11 +98,17 @@ export function computeGridUniformScale(
   return targetMax / globalMax;
 }
 
+export interface NormalizeIconOptions {
+  /** 占畫布高度的比例，正值 = 主體下移 */
+  verticalBias?: number;
+}
+
 export function normalizeIconCell(
   source: HTMLCanvasElement,
   outW: number,
   outH: number,
   scale: number,
+  options?: NormalizeIconOptions,
 ): HTMLCanvasElement {
   const crop = getContentCrop(source);
   const canvas = document.createElement("canvas");
@@ -113,7 +122,7 @@ export function normalizeIconCell(
   const dw = crop.width * scale;
   const dh = crop.height * scale;
   const dx = (outW - dw) / 2;
-  const dy = (outH - dh) / 2;
+  const dy = (outH - dh) / 2 + outH * (options?.verticalBias ?? 0);
   ctx.drawImage(crop, dx, dy, dw, dh);
   return canvas;
 }
@@ -129,9 +138,10 @@ export function normalizePairedIconsWithScale(
   outW: number,
   outH: number,
   scale: number,
+  options?: NormalizeIconOptions,
 ): PairedIconOutput {
   return {
-    offCanvas: normalizeIconCell(offCell, outW, outH, scale),
-    onCanvas: normalizeIconCell(onCell, outW, outH, scale),
+    offCanvas: normalizeIconCell(offCell, outW, outH, scale, options),
+    onCanvas: normalizeIconCell(onCell, outW, outH, scale, options),
   };
 }

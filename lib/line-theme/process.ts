@@ -12,6 +12,7 @@ import {
 } from "@/lib/line-theme/output-map";
 import {
   MENU_CONTENT_FILL,
+  MENU_VERTICAL_BIAS,
   PASSCODE_CONTENT_FILL,
   computeGridUniformScale,
   normalizePairedIconsWithScale,
@@ -163,6 +164,7 @@ async function processMenuPaired(offFile: File, onFile: File): Promise<LineTheme
         MENU_ICON_W,
         MENU_ICON_H,
         scale,
+        { verticalBias: MENU_VERTICAL_BIAS },
       );
       out.push({ name: MENU_OFF_FILES[i]!, blob: await canvasToPngBlob(offCanvas) });
       out.push({ name: MENU_ON_FILES[i]!, blob: await canvasToPngBlob(onCanvas) });
