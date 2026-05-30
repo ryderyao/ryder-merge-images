@@ -10,7 +10,12 @@ import {
   PASSCODE_ON_FILES,
   PROFILE_OUTPUTS,
 } from "@/lib/line-theme/output-map";
-import { prepareIconCell } from "@/lib/line-theme/remove-background";
+import {
+  MENU_CONTENT_FILL,
+  PASSCODE_CONTENT_FILL,
+  computeGridUniformScale,
+  normalizePairedIconsWithScale,
+} from "@/lib/line-theme/normalize-icon";
 
 export interface LineThemeOutputFile {
   name: string;
@@ -105,11 +110,6 @@ function fitContainCanvas(
   return canvas;
 }
 
-function fitCellToMenuCanvas(source: HTMLCanvasElement): HTMLCanvasElement {
-  const icon = prepareIconCell(source);
-  return fitContainCanvas(icon, MENU_ICON_W, MENU_ICON_H);
-}
-
 function extractHalfSquare(bitmap: ImageBitmap, side: "left" | "right"): HTMLCanvasElement {
   const halfW = bitmap.width / 2;
   const h = bitmap.height;
@@ -128,11 +128,6 @@ function extractHalfSquare(bitmap: ImageBitmap, side: "left" | "right"): HTMLCan
   return canvas;
 }
 
-async function scaleSquareCanvas(source: HTMLCanvasElement, size: number): Promise<HTMLCanvasElement> {
-  const icon = prepareIconCell(source);
-  return fitContainCanvas(icon, size, size);
-}
-
 async function processCover(file: File): Promise<LineThemeOutputFile[]> {
   const bitmap = await createImageBitmap(file);
   try {
@@ -147,18 +142,35 @@ async function processCover(file: File): Promise<LineThemeOutputFile[]> {
   }
 }
 
-async function processMenuGrid(file: File, fileNames: readonly string[]): Promise<LineThemeOutputFile[]> {
-  const bitmap = await createImageBitmap(file);
+async function processMenuPaired(offFile: File, onFile: File): Promise<LineThemeOutputFile[]> {
+  const offBitmap = await createImageBitmap(offFile);
+  const onBitmap = await createImageBitmap(onFile);
   try {
-    const cells = splitGridCells(bitmap, 3, 3);
+    const offCells = splitGridCells(offBitmap, 3, 3);
+    const onCells = splitGridCells(onBitmap, 3, 3);
+    const scale = computeGridUniformScale(
+      offCells,
+      MENU_ICON_W,
+      MENU_ICON_H,
+      MENU_CONTENT_FILL,
+    );
     const out: LineThemeOutputFile[] = [];
-    for (let i = 0; i < fileNames.length; i++) {
-      const menuCanvas = fitCellToMenuCanvas(cells[i]!);
-      out.push({ name: fileNames[i]!, blob: await canvasToPngBlob(menuCanvas) });
+
+    for (let i = 0; i < MENU_OFF_FILES.length; i++) {
+      const { offCanvas, onCanvas } = normalizePairedIconsWithScale(
+        offCells[i]!,
+        onCells[i]!,
+        MENU_ICON_W,
+        MENU_ICON_H,
+        scale,
+      );
+      out.push({ name: MENU_OFF_FILES[i]!, blob: await canvasToPngBlob(offCanvas) });
+      out.push({ name: MENU_ON_FILES[i]!, blob: await canvasToPngBlob(onCanvas) });
     }
     return out;
   } finally {
-    bitmap.close();
+    offBitmap.close();
+    onBitmap.close();
   }
 }
 
@@ -168,7 +180,7 @@ async function processProfile(file: File): Promise<LineThemeOutputFile[]> {
     const out: LineThemeOutputFile[] = [];
     for (const spec of PROFILE_OUTPUTS) {
       const square = extractHalfSquare(bitmap, spec.side);
-      const scaled = await scaleSquareCanvas(square, spec.width);
+      const scaled = fitContainCanvas(square, spec.width, spec.height);
       out.push({ name: spec.name, blob: await canvasToPngBlob(scaled) });
     }
     return out;
@@ -177,24 +189,54 @@ async function processProfile(file: File): Promise<LineThemeOutputFile[]> {
   }
 }
 
-async function processPasscodeGrid(
-  file: File,
-  mappings: typeof PASSCODE_OFF_FILES | typeof PASSCODE_ON_FILES,
-): Promise<LineThemeOutputFile[]> {
-  const bitmap = await createImageBitmap(file);
+async function processPasscodePaired(offFile: File, onFile: File): Promise<LineThemeOutputFile[]> {
+  const offBitmap = await createImageBitmap(offFile);
+  const onBitmap = await createImageBitmap(onFile);
   try {
-    const cells = splitGridCells(bitmap, 2, 2);
+    const offCells = splitGridCells(offBitmap, 2, 2);
+    const onCells = splitGridCells(onBitmap, 2, 2);
+    const iosScale = computeGridUniformScale(
+      offCells,
+      PASSCODE_IOS_SIZE,
+      PASSCODE_IOS_SIZE,
+      PASSCODE_CONTENT_FILL,
+    );
+    const androidScale = computeGridUniformScale(
+      offCells,
+      PASSCODE_ANDROID_SIZE,
+      PASSCODE_ANDROID_SIZE,
+      PASSCODE_CONTENT_FILL,
+    );
     const out: LineThemeOutputFile[] = [];
-    for (let i = 0; i < mappings.length; i++) {
-      const cell = cells[i]!;
-      const ios = await scaleSquareCanvas(cell, PASSCODE_IOS_SIZE);
-      const android = await scaleSquareCanvas(cell, PASSCODE_ANDROID_SIZE);
-      out.push({ name: mappings[i]!.ios, blob: await canvasToPngBlob(ios) });
-      out.push({ name: mappings[i]!.android, blob: await canvasToPngBlob(android) });
+
+    for (let i = 0; i < PASSCODE_OFF_FILES.length; i++) {
+      const mapping = PASSCODE_OFF_FILES[i]!;
+      const onMapping = PASSCODE_ON_FILES[i]!;
+
+      const iosPair = normalizePairedIconsWithScale(
+        offCells[i]!,
+        onCells[i]!,
+        PASSCODE_IOS_SIZE,
+        PASSCODE_IOS_SIZE,
+        iosScale,
+      );
+      const androidPair = normalizePairedIconsWithScale(
+        offCells[i]!,
+        onCells[i]!,
+        PASSCODE_ANDROID_SIZE,
+        PASSCODE_ANDROID_SIZE,
+        androidScale,
+      );
+
+      out.push({ name: mapping.ios, blob: await canvasToPngBlob(iosPair.offCanvas) });
+      out.push({ name: onMapping.ios, blob: await canvasToPngBlob(iosPair.onCanvas) });
+      out.push({ name: mapping.android, blob: await canvasToPngBlob(androidPair.offCanvas) });
+      out.push({ name: onMapping.android, blob: await canvasToPngBlob(androidPair.onCanvas) });
     }
     return out;
   } finally {
-    bitmap.close();
+    offBitmap.close();
+    onBitmap.close();
   }
 }
 
@@ -208,28 +250,12 @@ export interface LineThemeMotherFiles {
 }
 
 export async function processLineThemePack(files: LineThemeMotherFiles): Promise<LineThemeOutputFile[]> {
-  const [
-    coverFiles,
-    menuOffFiles,
-    menuOnFiles,
-    profileFiles,
-    passcodeOffFiles,
-    passcodeOnFiles,
-  ] = await Promise.all([
+  const [coverFiles, menuFiles, profileFiles, passcodeFiles] = await Promise.all([
     processCover(files.cover),
-    processMenuGrid(files.menuOff, MENU_OFF_FILES),
-    processMenuGrid(files.menuOn, MENU_ON_FILES),
+    processMenuPaired(files.menuOff, files.menuOn),
     processProfile(files.profile),
-    processPasscodeGrid(files.passcodeOff, PASSCODE_OFF_FILES),
-    processPasscodeGrid(files.passcodeOn, PASSCODE_ON_FILES),
+    processPasscodePaired(files.passcodeOff, files.passcodeOn),
   ]);
 
-  return [
-    ...coverFiles,
-    ...menuOffFiles,
-    ...menuOnFiles,
-    ...profileFiles,
-    ...passcodeOffFiles,
-    ...passcodeOnFiles,
-  ];
+  return [...coverFiles, ...menuFiles, ...profileFiles, ...passcodeFiles];
 }
